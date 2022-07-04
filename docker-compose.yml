@@ -1,0 +1,126 @@
+version: '3.7'
+
+services:
+  warehouse_api:
+    container_name: warehouse_api
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+    ports:
+      - ${WAREHOUSE_API_PORT}:${WAREHOUSE_API_PORT}
+      - 9229:9229
+    command: >
+      sh -c "npx prisma migrate deploy --schema=/app/apps/warehouse-api/prisma/schema.prisma &&
+             npx prisma generate --schema=/app/apps/warehouse-api/prisma/schema.prisma &&
+             npm run start:debug"
+    env_file:
+      - .env
+    networks:
+      - warehouse
+      - general
+    depends_on:
+      - db_warehouse
+  db_warehouse:
+    container_name: db_warehouse
+    restart: always
+    image: mysql:latest
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USERNAME=${MYSQL_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DB_PORT=${MYSQL_DB_PORT}
+    ports:
+      - "${MYSQL_DB_PORT}:3306"
+    volumes:
+      - ./db/warehouse:/var/lib/mysql
+    networks:
+      - warehouse
+      - general
+  pharmacy_api:
+    container_name: pharmacy_api
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+    ports:
+      - ${PHARMACY_API_PORT}:${PHARMACY_API_PORT}
+      - 9230:9229
+    command: >
+      sh -c "npx prisma migrate deploy --schema=/app/apps/pharmacy-api/prisma/schema.prisma &&
+             npx prisma generate --schema=/app/apps/pharmacy-api/prisma/schema.prisma &&
+             npm run start:debug pharmacy-api"
+    env_file:
+      - .env
+    networks:
+      - pharmacy
+      - general
+    depends_on:
+      - db_pharmacy
+  db_pharmacy:
+    container_name: db_pharmacy
+    restart: always
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_DB_PORT}:5432"
+    volumes:
+    
+      - ./db/pharmacy:/var/lib/postgresql
+    networks:
+      - pharmacy
+      - general
+  contacts_api:
+    container_name: contacts_api
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+    ports:
+      - ${CONTACTS_API_PORT}:${CONTACTS_API_PORT}
+      - 9231:9229
+    command: >
+      sh -c "npx prisma migrate deploy --schema=/app/apps/contacts-api/prisma/schema.prisma &&
+             npx prisma generate --schema=/app/apps/contacts-api/prisma/schema.prisma &&
+             npm run start:debug contacts-api"
+    env_file:
+      - .env
+    networks:
+      - contacts
+      - general
+    depends_on:
+      - db_contacts
+  db_contacts:
+    container_name: db_contacts
+    restart: always
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db/contacts:/var/lib/postgresql
+    networks:
+      - contacts
+      - general
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - general
+networks:
+  warehouse:
+  pharmacy:
+  contacts:
+  general:
+volumes:
+  mysql:

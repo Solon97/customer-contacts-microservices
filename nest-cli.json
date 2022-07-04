@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/warehouse-api/src",
+  "monorepo": true,
+  "root": "apps/warehouse-api",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/warehouse-api/tsconfig.app.json"
+  },
+  "projects": {
+    "warehouse-api": {
+      "type": "application",
+      "root": "apps/warehouse-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/warehouse-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/warehouse-api/tsconfig.app.json"
+      }
+    },
+    "pharmacy-api": {
+      "type": "application",
+      "root": "apps/pharmacy-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/pharmacy-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/pharmacy-api/tsconfig.app.json"
+      }
+    },
+    "contacts-api": {
+      "type": "application",
+      "root": "apps/contacts-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/contacts-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/contacts-api/tsconfig.app.json"
+      }
+    }
+  }
+}

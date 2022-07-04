@@ -1,0 +1,28 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("PHARMACY_DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "./client"
+}
+
+model User {
+  id                     Int      @id @default(autoincrement())
+  username               String   @unique
+  token                  String   @unique
+  isAdmin                Boolean  @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+//TODO: Isolar models em arquivos separados
+
+model Contact {
+  id                     Int     @id @default(autoincrement())
+  name                   String  @db.VarChar(240)
+  cellphone              String  @db.VarChar(20)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
